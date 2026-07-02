@@ -1128,3 +1128,116 @@ code {
     color: #ff5f5f;
   }
 }
+
+/* --- b4ux1t3 fork overrides: kept at the very end of the file on purpose.
+   CSS cascade resolves equal-specificity rules by source order -- an
+   earlier attempt at these same two overrides got silently clobbered by
+   upstream's own later `.panel {...opacity:0...}` declaration because it
+   was placed near the top of the file, above that rule. Anything in this
+   block MUST stay after every upstream rule it's meant to override, so:
+   new fork overrides go here, at the end, not wherever seems tidy. */
+
+/* Upstream sciui only styles specific component classes (.panel, .header,
+   .title, etc.) and never sets a default body text color, since it
+   assumes every bit of text lives inside one of those wrapper components.
+   ilo alasa nasin renders plain semantic HTML (h1/h3/li/ul/form) without
+   adopting sciui's component markup, so without this rule all that text
+   falls back to browser-default black-on-#000b12 -- functionally
+   invisible. This sets a legible default matching the theme's existing
+   link/accent color (rgba(120,200,255,*)) rather than pure white, so
+   plain text still reads as "sciui", not just "dark page, readable
+   text". Headings get the brighter/opaque variant already used for panel
+   titles so they stand out from body copy. */
+body {
+  color: rgba(120, 200, 255, 0.75);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: rgba(120, 200, 255, 0.95);
+}
+button {
+  color: rgba(120, 200, 255, 0.85);
+}
+
+/* Upstream .panel defaults to opacity:0, revealed by base.js's JS-driven
+   fade-in (randomAnimation() adding .shown). We don't load base.js, so
+   without this override every .panel stays permanently invisible. */
+.panel {
+  opacity: 1;
+}
+
+/* Asset cards (Companion/Path/Combat Talent). Deliberately NOT a plain
+   bordered box (old Stargazer's look) and NOT a printed-card-with-artwork
+   layout (real Starforged's look) -- a pulsing holographic glow instead,
+   distinct from both on sight. */
+.asset-card {
+  border: 1px solid rgba(120, 200, 255, 0.4);
+  border-radius: 6px;
+  padding: 0.8em 1em;
+  margin-bottom: 1em;
+  background: linear-gradient(160deg, rgba(120, 200, 255, 0.1), rgba(0, 8, 13, 0.6));
+  box-shadow:
+    0 0 8px rgba(120, 200, 255, 0.35),
+    0 0 22px rgba(120, 200, 255, 0.15),
+    inset 0 0 14px rgba(120, 200, 255, 0.06);
+  animation: asset-card-pulse 3.5s ease-in-out infinite;
+}
+@keyframes asset-card-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 8px rgba(120, 200, 255, 0.35),
+      0 0 22px rgba(120, 200, 255, 0.15),
+      inset 0 0 14px rgba(120, 200, 255, 0.06);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(120, 200, 255, 0.55),
+      0 0 34px rgba(120, 200, 255, 0.28),
+      inset 0 0 20px rgba(120, 200, 255, 0.1);
+  }
+}
+.asset-card-title {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 1.1em;
+  color: rgba(180, 225, 255, 1);
+  text-shadow: 0 0 6px rgba(120, 200, 255, 0.8);
+  margin: 0 0 0.3em;
+}
+.asset-card-subtitle {
+  color: rgba(120, 200, 255, 0.6);
+  font-style: italic;
+  margin: 0 0 0.5em;
+}
+.asset-card-type {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75em;
+  color: rgba(120, 200, 255, 0.9);
+  border: 1px solid rgba(120, 200, 255, 0.4);
+  border-radius: 3px;
+  padding: 0.1em 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Scoped to asset cards only -- the page itself stays a normal stacked
+   layout (panels full-width, top to bottom, upstream's own behavior).
+   Only the assets list gets flex-flow: bounded width + flex-basis on the
+   cards, and a flex-wrap container around them, so multiple cards can sit
+   side by side and wrap down to one per row on narrow screens with no
+   media queries needed. */
+.asset-card {
+  flex: 1 1 400px;
+  max-width: 600px;
+}
+/* Generic reusable flow container for anything that lists multiple cards
+   side by side (asset cards today; faction cards etc. later, if wanted)
+   -- a plain block-level wrapper div doesn't make its children flex
+   items on its own, so multi-card lists need this class explicitly. Only
+   apply it to the specific wrapper around a set of cards, never to
+   `body` or a whole page. */
+.card-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8em;
+}
