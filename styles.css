@@ -1241,3 +1241,38 @@ button {
   flex-wrap: wrap;
   gap: 0.8em;
 }
+
+/* "View this component's own URL" link (nav.ml's `panel`'s ~link, plus
+   the plain-div per-entity renderers in pages_factions.ml/
+   pages_tracks.ml/pages_truths.ml that aren't Nav.panel-wrapped).
+   Deliberately subtle -- a small glyph, low opacity until hovered, not a
+   "View" button -- meant to be invisible until you already know it's
+   there. Two different layout strategies depending on what it's sitting
+   in, both chosen to avoid pushing sibling content onto a new line:
+   inside `.panel .header` there's a dedicated title strip to overlay
+   (absolute-position into its corner); the plain per-entity divs have no
+   such strip, so the link floats instead, reserving space in normal flow
+   rather than overlapping the entity's own content. *)
+.panel .header {
+  position: relative;
+}
+.panel .header .panel-link {
+  position: absolute;
+  top: 0.35em;
+  right: 0.6em;
+}
+.faction .panel-link,
+.progress-track .panel-link,
+.clock .panel-link,
+.truth .panel-link,
+.asset-card-wrapper .panel-link {
+  float: right;
+}
+.panel-link {
+  font-size: 0.9em;
+  text-decoration: none;
+  opacity: 0.35;
+}
+.panel-link:hover {
+  opacity: 1;
+}
