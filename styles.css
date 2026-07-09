@@ -1276,3 +1276,20 @@ button {
 .panel-link:hover {
   opacity: 1;
 }
+/* Tabler `link` glyph (lib/web/icons.ml), replacing the placeholder 🔗
+   emoji that used to sit here -- see the project's PLAN.md "Styling"
+   section and static/icons/tabler/ for the vendoring/licensing notes.
+   Standard color emoji ignore `color`/`opacity` entirely in every
+   mainstream browser, so it could never actually pick up this rule block's
+   accent color or dim/brighten on hover the way this SVG (rendered with
+   `fill="currentColor"`) now does. Sized off `.panel-link`'s own
+   `font-size: 0.9em` (rather than the SVG's own width/height attributes,
+   which this overrides) so it tracks the same glyph-relative size the
+   emoji had; `vertical-align` nudges it to sit on the text baseline like a
+   glyph instead of an inline-block image. */
+.panel-link svg {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+}
