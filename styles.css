@@ -1244,15 +1244,30 @@ button {
 
 /* "View this component's own URL" link (nav.ml's `panel`'s ~link, plus
    the plain-div per-entity renderers in pages_factions.ml/
-   pages_tracks.ml/pages_truths.ml that aren't Nav.panel-wrapped).
-   Deliberately subtle -- a small glyph, low opacity until hovered, not a
-   "View" button -- meant to be invisible until you already know it's
-   there. Two different layout strategies depending on what it's sitting
-   in, both chosen to avoid pushing sibling content onto a new line:
-   inside `.panel .header` there's a dedicated title strip to overlay
-   (absolute-position into its corner); the plain per-entity divs have no
-   such strip, so the link floats instead, reserving space in normal flow
-   rather than overlapping the entity's own content. *)
+   pages_tracks.ml/pages_truths.ml/pages_character.ml that aren't
+   Nav.panel-wrapped). Deliberately subtle -- a small glyph, low opacity
+   until hovered, not a "View" button -- meant to be invisible until you
+   already know it's there.
+
+   `.panel .header .panel-link` keeps its own position:absolute pinning
+   below (layered under app.css's later `.panel .header { display: flex }`
+   rule) -- untouched here, out of scope for this change, still relied on
+   by that already-working case.
+
+   The per-entity divs (`.faction`/`.progress-track`/`.clock`/`.truth`/
+   `.asset-card-wrapper`) used to `float: right` their own panel-link
+   instead -- correct only by accident of currently having nothing
+   preceding the link in each renderer, the same order-dependent fragility
+   already found and fixed for `.panel .header` (a float placed after a
+   preceding full-width block can't overlap upward, it drops to the next
+   line -- exactly what would happen here the moment any of those
+   renderers gains content before the link). Fixed the same way in spirit,
+   but via a dedicated wrapper rather than flexing the whole container
+   (these divs have much more than a title+link pair as children, unlike
+   `.panel .header`): `.panel-link-row` (static/app.css) is a small,
+   order-independent flex row containing just the link, and every one of
+   those five renderers now wraps its `Icons.link` anchor in one instead
+   of leaving it floating loose in the entity's own flow. *)
 .panel .header {
   position: relative;
 }
@@ -1260,13 +1275,6 @@ button {
   position: absolute;
   top: 0.35em;
   right: 0.6em;
-}
-.faction .panel-link,
-.progress-track .panel-link,
-.clock .panel-link,
-.truth .panel-link,
-.asset-card-wrapper .panel-link {
-  float: right;
 }
 .panel-link {
   font-size: 0.9em;
